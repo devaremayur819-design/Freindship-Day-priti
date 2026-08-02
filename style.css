@@ -1,0 +1,588 @@
+/* ==========================================
+   SYSTEM RESET & DESIGN VARIABLES
+   ========================================== */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+:root {
+    --font-primary: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-serif: Georgia, 'Times New Roman', serif;
+    
+    --glass-bg: rgba(255, 255, 255, 0.28);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --glass-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+    
+    --text-dark: #2d0c41;
+    --accent-pink: #ff2a75;
+    --accent-gold: #ffd700;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: var(--font-primary);
+    background: linear-gradient(-45deg, #ff9a9e, #fecfef, #a1c4fd, #c2e9fb);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+}
+
+/* Background Canvas */
+#fx-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* App Container */
+.app-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    padding: 20px;
+}
+
+/* Screen Transitions */
+.screen {
+    position: absolute;
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.9) translateY(20px);
+}
+
+.screen.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: scale(1) translateY(0);
+}
+
+/* Glassmorphism Card */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid var(--glass-border);
+    border-radius: 32px;
+    padding: 40px 30px;
+    width: 100%;
+    text-align: center;
+    box-shadow: var(--glass-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+}
+
+/* UI Elements */
+.badge {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent-pink);
+    letter-spacing: 1px;
+}
+
+.main-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.3;
+}
+
+.main-title.serif {
+    font-family: var(--font-serif);
+    font-size: 2.5rem;
+}
+
+.highlight-name {
+    color: var(--accent-pink);
+    text-decoration: underline;
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: #4a154b;
+    line-height: 1.5;
+}
+
+.subtitle.large {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.hint-text {
+    font-size: 0.85rem;
+    color: #6a1b9a;
+    font-weight: 600;
+    min-height: 20px;
+}
+
+/* Buttons & Evasion */
+.button-group {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 10px;
+    position: relative;
+    min-height: 60px;
+}
+
+.btn {
+    padding: 16px 36px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.btn-yes {
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    color: #ffffff;
+}
+
+.btn-yes:hover {
+    transform: scale(1.08);
+    box-shadow: 0 15px 30px rgba(255, 65, 108, 0.4);
+}
+
+.btn-no {
+    background: rgba(255, 255, 255, 0.85);
+    color: #555;
+    position: relative;
+    z-index: 100;
+    will-change: transform, left, top;
+}
+
+/* Floating Audio Toggle */
+.audio-control {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 999;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* ==========================================
+   PURE HTML/CSS ANIMATED PUPPY
+   ========================================== */
+.puppy-container {
+    width: 180px;
+    height: 180px;
+    margin: 10px 0;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.puppy-body-wrapper {
+    position: relative;
+    width: 120px;
+    height: 140px;
+    animation: puppyBounce 1.2s infinite ease-in-out alternate;
+}
+
+.puppy-body-wrapper.jump {
+    animation: puppyJump 0.5s ease-out;
+}
+
+/* Tail & Wagging */
+.puppy-tail {
+    position: absolute;
+    bottom: 25px;
+    right: 0px;
+    width: 18px;
+    height: 50px;
+    background: #d48b47;
+    border-radius: 10px;
+    transform-origin: bottom center;
+    animation: wagTail 0.25s infinite alternate ease-in-out;
+}
+
+/* Body & Paws */
+.puppy-body {
+    position: absolute;
+    bottom: 0;
+    left: 20px;
+    width: 80px;
+    height: 70px;
+    background: #e29d52;
+    border-radius: 40px 40px 25px 25px;
+}
+
+.puppy-paws {
+    position: absolute;
+    bottom: -5px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+}
+
+.paw {
+    width: 22px;
+    height: 16px;
+    background: #c87f3a;
+    border-radius: 10px 10px 5px 5px;
+}
+
+/* Head & Ears */
+.puppy-head {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    width: 100px;
+    height: 90px;
+    background: #f0aa5d;
+    border-radius: 50px 50px 40px 40px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.puppy-ear {
+    position: absolute;
+    top: -5px;
+    width: 32px;
+    height: 55px;
+    background: #b8712a;
+    border-radius: 20px 20px 8px 8px;
+}
+
+.ear-left {
+    left: -8px;
+    transform: rotate(-25deg);
+    animation: moveEarLeft 2s infinite ease-in-out alternate;
+}
+
+.ear-right {
+    right: -8px;
+    transform: rotate(25deg);
+    animation: moveEarRight 2s infinite ease-in-out alternate;
+}
+
+/* Eyes & Pupils */
+.puppy-eye {
+    position: absolute;
+    top: 28px;
+    width: 22px;
+    height: 22px;
+    background: #222;
+    border-radius: 50%;
+    overflow: hidden;
+    animation: blinkEye 4s infinite;
+}
+
+.eye-left { left: 22px; }
+.eye-right { right: 22px; }
+
+.pupil {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.1s ease-out;
+}
+
+/* Snout, Nose, Mouth & Tongue */
+.puppy-snout {
+    position: absolute;
+    bottom: 12px;
+    left: 28px;
+    width: 44px;
+    height: 32px;
+    background: #fbe3c7;
+    border-radius: 22px;
+}
+
+.puppy-nose {
+    position: absolute;
+    top: 4px;
+    left: 14px;
+    width: 16px;
+    height: 12px;
+    background: #2d1810;
+    border-radius: 10px 10px 14px 14px;
+}
+
+.puppy-mouth {
+    position: absolute;
+    top: 16px;
+    left: 14px;
+    width: 16px;
+    height: 8px;
+    border-bottom: 3px solid #2d1810;
+    border-radius: 0 0 10px 10px;
+}
+
+.puppy-tongue {
+    position: absolute;
+    top: 20px;
+    left: 16px;
+    width: 12px;
+    height: 0px;
+    background: #ff5277;
+    border-radius: 0 0 8px 8px;
+    transition: height 0.2s ease;
+}
+
+.puppy-tongue.licking {
+    height: 16px;
+    animation: pantTongue 0.3s infinite alternate;
+}
+
+.puppy-subtext {
+    font-size: 0.85rem;
+    color: #6a1b9a;
+    font-weight: 600;
+}
+
+/* Screen Lick Overlay Effect */
+.lick-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(2px);
+    transition: opacity 0.5s ease;
+}
+
+.lick-overlay.hidden {
+    opacity: 0;
+}
+
+.tongue-print {
+    font-size: 15rem;
+    animation: lickScreen 0.8s ease-in-out;
+}
+
+/* ==========================================
+   CERTIFICATE & FINALE UI
+   ========================================== */
+.cert-wrapper { max-width: 520px; }
+
+.certificate {
+    width: 100%;
+    background: #fff;
+    border-radius: 16px;
+    padding: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.cert-border {
+    border: 3px double #d4af37;
+    border-radius: 12px;
+    padding: 20px;
+    background: #fffdf9;
+}
+
+.cert-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.cert-badge {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    color: #888;
+    font-weight: 700;
+}
+
+.certificate h2 {
+    font-family: var(--font-serif);
+    color: #333;
+    font-size: 1.8rem;
+}
+
+.cert-body {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.cert-name {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    color: var(--accent-pink);
+    border-bottom: 2px solid var(--accent-pink);
+    padding: 0 15px;
+}
+
+.cert-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 15px;
+    font-size: 0.75rem;
+    color: #777;
+}
+
+.cert-meta {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 4px;
+}
+
+.gold-seal {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.5rem;
+    font-weight: 800;
+    color: #4a3b00;
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    padding: 12px 24px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    z-index: 1000;
+    transition: all 0.4s ease;
+}
+
+.toast.hidden {
+    opacity: 0;
+    transform: translate(-50%, 50px);
+    pointer-events: none;
+}
+
+.toast-icon { font-size: 1.5rem; }
+.toast-content h4 { font-size: 0.85rem; color: #333; }
+.toast-content p { font-size: 0.75rem; color: #666; }
+
+.countdown-title { font-size: 2rem; color: var(--text-dark); }
+.countdown-display { font-size: 6rem; font-weight: 800; color: var(--accent-pink); }
+
+/* ==========================================
+   ANIMATION KEYFRAMES
+   ========================================== */
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes puppyBounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-12px); }
+}
+
+@keyframes puppyJump {
+    0% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-35px) scale(1.15); }
+    100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes wagTail {
+    0% { transform: rotate(-35deg); }
+    100% { transform: rotate(35deg); }
+}
+
+@keyframes moveEarLeft {
+    0% { transform: rotate(-25deg); }
+    100% { transform: rotate(-40deg); }
+}
+
+@keyframes moveEarRight {
+    0% { transform: rotate(25deg); }
+    100% { transform: rotate(40deg); }
+}
+
+@keyframes blinkEye {
+    0%, 92%, 100% { transform: scaleY(1); }
+    96% { transform: scaleY(0.1); }
+}
+
+@keyframes pantTongue {
+    0% { height: 14px; }
+    100% { height: 18px; }
+}
+
+@keyframes lickScreen {
+    0% { transform: scale(0.3) rotate(-20deg); opacity: 0; }
+    50% { transform: scale(1.2) rotate(0deg); opacity: 1; }
+    100% { transform: scale(1) rotate(10deg); opacity: 0; }
+}
+
+.shake { animation: shakeEffect 0.5s ease; }
+@keyframes shakeEffect {
+    10%, 90% { transform: translate3d(-2px, 0, 0); }
+    20%, 80% { transform: translate3d(4px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
+    40%, 60% { transform: translate3d(8px, 0, 0); }
+}
+
+@media (max-width: 480px) {
+    .main-title { font-size: 1.6rem; }
+    .glass-card { padding: 30px 20px; }
+    .btn { padding: 14px 28px; font-size: 1rem; }
+  }
+  
