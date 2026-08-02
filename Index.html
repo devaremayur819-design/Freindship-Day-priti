@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Will You Be My Friend Forever? 💖</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <canvas id="fx-canvas"></canvas>
+
+    <div class="audio-control" id="audio-toggle" role="button" aria-label="Toggle Sound">
+        <span id="audio-icon">🎵</span>
+    </div>
+
+    <div id="achievement-toast" class="toast hidden">
+        <div class="toast-icon">🏆</div>
+        <div class="toast-content">
+            <h4 id="toast-title">Achievement Unlocked!</h4>
+            <p id="toast-desc">You found a secret!</p>
+        </div>
+    </div>
+
+    <main class="app-container">
+
+        <section id="screen-landing" class="screen active">
+            <div class="glass-card">
+                <span class="badge">LAST ONE, PROMISE 💖</span>
+                <h1 class="main-title">Will you be my friend forever, <span class="highlight-name" id="friend-name">Priti</span>?</h1>
+                <p class="subtitle">There's only one honest answer here...<br>The other one is a little shy 😉</p>
+                
+                <div class="button-group">
+                    <button id="btn-yes" class="btn btn-yes">YES ❤️</button>
+                    <button id="btn-no" class="btn btn-no">NO 🙈</button>
+                </div>
+                <p id="no-counter-hint" class="hint-text"></p>
+            </div>
+        </section>
+
+        <section id="screen-puppy" class="screen hidden">
+            <div class="glass-card celebration-card">
+                <div class="emoji-header">🥹❤️</div>
+                <h1 class="celebration-title">I KNEW YOU WOULD SAY YES!!</h1>
+                
+                <div class="puppy-container" id="puppy-box">
+                    <div class="puppy-body-wrapper" id="puppy-element">
+                        <div class="puppy-tail"></div>
+                        <div class="puppy-body">
+                            <div class="puppy-paws">
+                                <div class="paw paw-left"></div>
+                                <div class="paw paw-right"></div>
+                            </div>
+                        </div>
+                        <div class="puppy-head">
+                            <div class="puppy-ear ear-left"></div>
+                            <div class="puppy-ear ear-right"></div>
+                            <div class="puppy-eye eye-left">
+                                <div class="pupil" id="pupil-left"></div>
+                            </div>
+                            <div class="puppy-eye eye-right">
+                                <div class="pupil" id="pupil-right"></div>
+                            </div>
+                            <div class="puppy-snout">
+                                <div class="puppy-nose"></div>
+                                <div class="puppy-mouth"></div>
+                                <div class="puppy-tongue" id="puppy-tongue"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="puppy-subtext">Click puppy to play! 🐶💋</p>
+            </div>
+        </section>
+
+        <section id="screen-promise" class="screen hidden">
+            <div class="glass-card">
+                <span class="badge">WAIT... ONE MORE THING... 🤫</span>
+                <h1 class="main-title serif">Promise me...</h1>
+                <p class="subtitle large">We'll stay friends forever ❤️</p>
+                
+                <div class="button-group">
+                    <button id="btn-promise-1" class="btn btn-yes">I Promise 🤝</button>
+                    <button id="btn-promise-2" class="btn btn-yes">Forever ❤️</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-certificate" class="screen hidden">
+            <div class="glass-card cert-wrapper">
+                <div class="certificate" id="certificate-node">
+                    <div class="cert-border">
+                        <div class="cert-inner">
+                            <div class="cert-header">
+                                <span class="cert-badge">OFFICIAL CERTIFICATE</span>
+                                <h2>Best Friends Forever</h2>
+                            </div>
+                            <p class="cert-body">This official document certifies that</p>
+                            <h3 class="cert-name" id="cert-user-name">Priti</h3>
+                            <p class="cert-body">is legally and eternally bound as an extraordinary best friend!</p>
+                            
+                            <div class="cert-footer">
+                                <div class="cert-meta">
+                                    <span>DATE: <strong id="cert-date">--/--/----</strong></span>
+                                    <span>ID: <strong id="cert-id">BFF-0000</strong></span>
+                                </div>
+                                <div class="gold-seal">
+                                    <span>SEAL</span>
+                                    ⭐
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cert-actions">
+                    <button id="btn-download-cert" class="btn btn-yes">Download Certificate 📜</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-countdown" class="screen hidden">
+            <div class="glass-card text-center">
+                <h1 class="countdown-title">Get Ready...</h1>
+                <div id="countdown-timer" class="countdown-display">3</div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="screen-lick-overlay" class="lick-overlay hidden">
+        <div class="tongue-print">👅</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
