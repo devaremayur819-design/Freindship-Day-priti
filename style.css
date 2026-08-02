@@ -3,7 +3,7 @@
 :root {
     --text-dark: #2d0c41;
     --accent-pink: #ff2a75;
-    --glass: rgba(255, 255, 255, 0.3);
+    --glass: rgba(255, 255, 255, 0.35);
 }
 
 body {
@@ -22,36 +22,38 @@ body {
 
 .screen { 
     position: absolute; width: 90%; max-width: 450px; 
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    display: none; 
+    transition: opacity 0.4s ease, transform 0.4s ease;
 }
-.screen.active { display: flex; opacity: 1; transform: scale(1); }
-.screen.hidden { display: none; opacity: 0; transform: scale(0.9); }
+.screen.active { display: flex !important; opacity: 1 !important; transform: scale(1) !important; pointer-events: all !important; }
+.screen.hidden { display: none !important; opacity: 0 !important; transform: scale(0.9) !important; pointer-events: none !important; }
 
 .glass-card {
     background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.5); border-radius: 30px;
-    padding: 40px 25px; width: 100%; text-align: center;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-    display: flex; flex-direction: column; align-items: center; gap: 20px;
+    border: 1px solid rgba(255,255,255,0.6); border-radius: 30px;
+    padding: 35px 25px; width: 100%; text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+    display: flex; flex-direction: column; align-items: center; gap: 18px;
 }
 
-.main-title { font-size: 2rem; color: var(--text-dark); line-height: 1.2; }
+.main-title { font-size: 1.8rem; color: var(--text-dark); line-height: 1.3; font-weight: 700; }
+.main-title.serif { font-family: Georgia, serif; font-size: 2.2rem; }
 .highlight-name { color: var(--accent-pink); text-decoration: underline; }
-.subtitle { font-size: 1rem; color: #4a154b; opacity: 0.9; }
-.subtitle.large { font-size: 1.2rem; font-weight: 600; }
+.subtitle { font-size: 0.95rem; color: #4a154b; line-height: 1.4; }
+.subtitle.large { font-size: 1.15rem; font-weight: 600; }
+.badge { background: rgba(255,255,255,0.7); padding: 5px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; color: var(--accent-pink); }
 
+.button-group { display: flex; gap: 15px; justify-content: center; width: 100%; margin-top: 5px; }
 .btn {
-    padding: 15px 30px; border-radius: 50px; border: none; font-weight: 700;
-    cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    padding: 14px 30px; border-radius: 50px; border: none; font-weight: 700; font-size: 1rem;
+    cursor: pointer; transition: 0.2s ease; box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 .btn-yes { background: linear-gradient(135deg, #ff416c, #ff4b2b); color: #fff; }
-.btn-yes:hover { transform: scale(1.1); }
-.btn-no { background: #fff; color: #555; }
-.btn-next { background: var(--text-dark); color: #fff; margin-top: 10px; }
+.btn-yes:active { transform: scale(0.95); }
+.btn-no { background: rgba(255,255,255,0.9); color: #555; position: relative; }
+.btn-next { background: var(--text-dark); color: #fff; }
 
-/* PUPPY CSS */
-.puppy-container { width: 150px; height: 150px; position: relative; margin: 20px 0; }
+/* PUPPY DISPLAY */
+.puppy-container { width: 150px; height: 150px; position: relative; margin: 10px 0; }
 .puppy-wrapper { position: relative; width: 100%; height: 100%; animation: bounce 1s infinite alternate; }
 .puppy-body { position: absolute; bottom: 0; left: 25px; width: 100px; height: 80px; background: #e29d52; border-radius: 50% 50% 20% 20%; }
 .puppy-tail { position: absolute; bottom: 10px; right: 10px; width: 15px; height: 40px; background: #c87f3a; border-radius: 10px; transform-origin: bottom; animation: wag 0.2s infinite; }
@@ -72,17 +74,20 @@ body {
 @keyframes blink { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
 
 /* CERTIFICATE */
-.cert-border { border: 4px double #d4af37; padding: 20px; background: #fff; border-radius: 10px; }
-.cert-name { font-size: 2rem; color: var(--accent-pink); border-bottom: 2px solid; margin: 10px 0; }
-.gold-seal { font-size: 2.5rem; }
+.certificate { width: 100%; background: #fff; border-radius: 15px; padding: 10px; }
+.cert-border { border: 3px double #d4af37; padding: 15px; background: #fffdf9; border-radius: 10px; }
+.cert-inner { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.cert-badge { font-size: 0.7rem; letter-spacing: 2px; color: #888; font-weight: 700; }
+.cert-name { font-size: 1.8rem; color: var(--accent-pink); border-bottom: 2px solid; padding: 0 10px; font-family: Georgia, serif; }
+.gold-seal { font-size: 2rem; }
 
 /* AUDIO & TOAST */
-.audio-control { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; background: var(--glass); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 1000; cursor: pointer; border: 1px solid #fff; }
-.toast { position: fixed; bottom: 20px; background: #fff; padding: 15px 25px; border-radius: 50px; display: flex; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: 0.5s; z-index: 2000; }
+.audio-control { position: fixed; top: 20px; right: 20px; width: 45px; height: 45px; background: var(--glass); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 1000; cursor: pointer; border: 1px solid #fff; }
+.toast { position: fixed; bottom: 20px; background: #fff; padding: 12px 20px; border-radius: 50px; display: flex; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: 0.4s; z-index: 2000; }
 .toast.hidden { transform: translateY(100px); opacity: 0; }
 
-.lick-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 15rem; z-index: 9999; opacity: 0; pointer-events: none; transition: 0.5s; }
-.lick-overlay.show { opacity: 1; transform: scale(1.2); }
+.lick-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 12rem; z-index: 9999; opacity: 0; pointer-events: none; transition: 0.4s; }
+.lick-overlay.show { opacity: 1; transform: scale(1.1); }
 
-.finale-title { font-size: 2.5rem; color: var(--accent-pink); animation: pulse 1s infinite; }
+.finale-title { font-size: 2rem; color: var(--accent-pink); animation: pulse 1s infinite; font-weight: 800; }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
